@@ -1,6 +1,6 @@
 # news-app-react
 
-This application is designed for getting the news using newsapi.
+This application is created to retrieve diverse types of news utilizing the NewsAPI and React components structured as classes.
 
 # Getting Started with Create React App
 
