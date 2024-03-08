@@ -1,15 +1,37 @@
-import './App.css';
 import { Component } from 'react';
+import './App.css';
 import NavBar from './components/NavBar';
 import News from './components/News';
 
-export default class App extends Component {
-  PAGE_SIZE = 6;
+
+interface AppState {
+  pageSize: number,
+  country: string
+}
+
+export default class App extends Component<{}, AppState> {
+
+  constructor(props: AppState) {
+    super(props);
+    this.state = {
+      pageSize: 6,
+      country: 'IN'
+    };
+  }
+
+  changeCountry = (value: string) => {
+    console.log('new country value: ', value);
+    this.setState({
+      country: value
+    });
+  }
+
   render() {
+    const { pageSize, country } = this.state;
     return (
       <div>
-        <NavBar></NavBar>
-        <News pageSize={this.PAGE_SIZE}></News>
+        <NavBar country={country} changeCountry={this.changeCountry}></NavBar>
+        <News pageSize={pageSize} country={country}></News>
       </div>
     )
   }
