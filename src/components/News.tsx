@@ -1,11 +1,14 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { NewsApiController, NewsDto } from '../controller/newsApiController';
+import { Utils } from '../controller/utils';
 import NewsItem from './NewsItem';
 import Spinner from './Spinner';
+import defaultIcon from './default_icon.png';
 
 interface NewsProps {
   pageSize: number;
   country: string;
+  category: string;
 }
 
 interface NewsState {
@@ -27,26 +30,33 @@ export default class News extends Component<NewsProps, NewsState> {
   }
 
   async componentDidMount() {
-    const { pageSize, country } = this.props;
-    await this.fetchNews(pageSize, country, this.state.pageNumber);
+    const { pageSize, country, category } = this.props;
+    await this.fetchNews(pageSize, country, category, this.state.pageNumber);
   }
 
   async componentDidUpdate(prevProps: NewsProps, prevState: NewsState) {
-    const { pageSize, country } = this.props;
+    const { pageSize, country, category } = this.props;
 
     if (prevState.pageNumber !== this.state.pageNumber) {
-      await this.fetchNews(pageSize, country, this.state.pageNumber);
+      await this.fetchNews(pageSize, country, category, this.state.pageNumber);
     }
-    if (prevProps.country !== country) {
+    if (prevProps.category !== category || prevProps.country !== country) {
       this.setState({ pageNumber: 1 });
-      await this.fetchNews(pageSize, country, 1);
+      await this.fetchNews(pageSize, country, category, 1);
     }
   }
 
-  async fetchNews(pageSize: number, country: string, pageNumber: number) {
-    this.setState({loading: true});
+  async fetchNews(pageSize: number, country: string, category: string, pageNumber: number) {
+    this.setState({ loading: true });
     const newsApi = new NewsApiController();
-    const response = await newsApi.fetchNewsByCountry(country, pageNumber, pageSize);
+    let response;
+
+    if (!Utils.isEmpty(country)) {
+      response = await newsApi.fetchNewsByCountry(country, pageNumber, pageSize);
+    } else {
+      response = await newsApi.fetchNewsByCategory(category, pageNumber, pageSize);
+    }
+
     this.setState({
       articles: response[0],
       loading: false,
@@ -79,7 +89,7 @@ export default class News extends Component<NewsProps, NewsState> {
               <NewsItem
                 title={article.title}
                 description={article.description}
-                imageUrl={article.urlToImage}
+                imageUrl={Utils.isEmpty(article.urlToImage) ? defaultIcon : article.urlToImage}
                 newsUrl={article.url}
               />
             </div>
@@ -88,7 +98,7 @@ export default class News extends Component<NewsProps, NewsState> {
         <div className='container d-flex justify-content-between'>
           <button type="button" disabled={pageNumber <= 1} className="btn btn-dark" onClick={this.handlePreviousClick}>&larr; Previous</button>
           <span>{`Page ${pageNumber}`}</span>
-          <button type="button" disabled={totalArticles<=0} className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button>
+          <button type="button" disabled={totalArticles <= 0} className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button>
         </div>
       </div>
     );

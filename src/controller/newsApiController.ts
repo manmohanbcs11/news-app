@@ -33,7 +33,7 @@ export class NewsApiController {
     return await this.getNewsApiResponse(url, pageNo, pageSize);
   }
 
-  public async fetchNewsByTopic(topic: string, pageNo: number, pageSize: number, fromDate?: string, toDate?: string, sortBy: string = 'popularity'): Promise<[NewsDto[], number]> {
+  public async fetchNewsByCategory(topic: string, pageNo: number, pageSize: number, fromDate?: string, toDate?: string, sortBy: string = 'publishedAt'): Promise<[NewsDto[], number]> {
     let query = `everything?q=${topic}`;
     query = Utils.isEmpty(fromDate) ? query : `${query}&from=${fromDate}`;
     query = Utils.isEmpty(toDate) ? query : `${query}&to=${toDate}`;
@@ -62,9 +62,7 @@ export class NewsApiController {
         const jsonResponse: any = await response.json();
         totalArticles = jsonResponse.totalResults - (pageNo * pageSize);
         const allArticles = jsonResponse.articles;
-        data = allArticles.filter((a: NewsDto) =>
-          !Utils.isEmpty(a.title) && !Utils.isEmpty(a.description) && !Utils.isEmpty(a.urlToImage) &&
-          !Utils.isEmpty(a.url) && !Utils.isEmpty(a.content));
+        data = allArticles.filter((a: NewsDto) => !Utils.isEmpty(a.url));
       }
     } catch (err: any) {
       console.log('Error Occurred.', err);
