@@ -33,7 +33,7 @@ export class NewsApiController {
     return await this.getNewsApiResponse(url, pageNo, pageSize);
   }
 
-  public async fetchNewsByCategory(topic: string, pageNo: number, pageSize: number, fromDate?: string, toDate?: string, sortBy: string = 'publishedAt'): Promise<[NewsDto[], number]> {
+  public async fetchNewsByCategory(topic: string | undefined, pageNo: number, pageSize: number, fromDate?: string, toDate?: string, sortBy: string = 'publishedAt'): Promise<[NewsDto[], number]> {
     let query = `everything?q=${topic}`;
     query = Utils.isEmpty(fromDate) ? query : `${query}&from=${fromDate}`;
     query = Utils.isEmpty(toDate) ? query : `${query}&to=${toDate}`;

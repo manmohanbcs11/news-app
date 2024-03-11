@@ -5,15 +5,42 @@ import { NavLink } from 'react-router-dom';
 
 interface NavProps {
   updateCountry(country: string): void;
+  handleSearch(searchItem: string): void;
+  history: any;
 }
 
-export class NavBar extends Component<NavProps> {
+interface NavState {
+  searchItem: string;
+}
+
+export class NavBar extends Component<NavProps, NavState> {
+
+  constructor(props: NavProps) {
+    super(props);
+    this.state = {
+      searchItem: ''
+    };
+  }
+
+
+  handleCountryChange = (country: string) => {
+    this.props.updateCountry(country);
+  }
+
+  // Handler for updating the searchItem state
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleInputChange searchItem: ', event.target.value);
+    this.setState({ searchItem: event.target.value });
+  }
+
+  // Handler for handling search button click
+  handleSearchClick = () => {
+    const { searchItem } = this.state;
+    console.log('handleSearchClick searchItem: ', searchItem);
+    this.props.handleSearch(searchItem);
+  }
 
   render() {
-
-    const handleCountryChange = (country: string) => {
-      this.props.updateCountry(country);
-    }
 
     return (
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -48,17 +75,17 @@ export class NavBar extends Component<NavProps> {
                   International
                 </button>
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><NavLink onClick={() => handleCountryChange('in')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/in">India</NavLink></li>
-                  <li><NavLink onClick={() => handleCountryChange('us')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/us">United States</NavLink></li>
-                  <li><NavLink onClick={() => handleCountryChange('gb')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/gb">United Kingdom</NavLink></li>
-                  <li><NavLink onClick={() => handleCountryChange('ca')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/ca">Canada</NavLink></li>
-                  <li><NavLink onClick={() => handleCountryChange('au')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/au">Australia</NavLink></li>
-                  <li><NavLink onClick={() => handleCountryChange('za')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/za">South Africa</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('in')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/in">India</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('us')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/us">United States</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('gb')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/gb">United Kingdom</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('ca')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/ca">Canada</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('au')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/au">Australia</NavLink></li>
+                  <li><NavLink onClick={() => this.handleCountryChange('za')} className="dropdown-item" style={{ color: '#3366dd' }} to="/country/za">South Africa</NavLink></li>
                 </ul>
               </li>
             </ul>
-            <form className="d-flex" role="search">
-              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+            <form className="d-flex" role="search" onSubmit={this.handleSearchClick}>
+              <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={this.handleInputChange} />
               <button className="btn btn-outline-success" type="submit">Search</button>
             </form>
           </div>

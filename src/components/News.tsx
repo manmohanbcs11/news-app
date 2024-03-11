@@ -9,6 +9,7 @@ interface NewsProps {
   pageSize: number;
   country: string;
   category: string;
+  searchItem?: string;
 }
 
 interface NewsState {
@@ -30,28 +31,33 @@ export default class News extends Component<NewsProps, NewsState> {
   }
 
   async componentDidMount() {
-    const { pageSize, country, category } = this.props;
-    await this.fetchNews(pageSize, country, category, this.state.pageNumber);
+    const { pageSize, country, category, searchItem } = this.props;
+    console.log('componentDidMount searchItem: ', searchItem);
+
+    await this.fetchNews(pageSize, country, category, this.state.pageNumber, searchItem);
   }
 
   async componentDidUpdate(prevProps: NewsProps, prevState: NewsState) {
-    const { pageSize, country, category } = this.props;
+    const { pageSize, country, category, searchItem } = this.props;
+    console.log('componentDidUpdate searchItem: ', searchItem);
 
     if (prevState.pageNumber !== this.state.pageNumber) {
-      await this.fetchNews(pageSize, country, category, this.state.pageNumber);
+      await this.fetchNews(pageSize, country, category, this.state.pageNumber, searchItem);
     }
-    if (prevProps.category !== category || prevProps.country !== country) {
+    if (prevProps.category !== category || prevProps.country !== country || prevProps.searchItem !== searchItem) {
       this.setState({ pageNumber: 1 });
-      await this.fetchNews(pageSize, country, category, 1);
+      await this.fetchNews(pageSize, country, category, 1, searchItem);
     }
   }
 
-  async fetchNews(pageSize: number, country: string, category: string, pageNumber: number) {
+  async fetchNews(pageSize: number, country: string, category: string, pageNumber: number, searchItem?: string) {
     this.setState({ loading: true });
     const newsApi = new NewsApiController();
     let response;
 
-    if (!Utils.isEmpty(country)) {
+    if (!Utils.isEmpty(searchItem)) {
+      response = await newsApi.fetchNewsByCategory(searchItem, pageNumber, pageSize);
+    } else if (!Utils.isEmpty(country)) {
       response = await newsApi.fetchNewsByCountry(country, pageNumber, pageSize);
     } else {
       response = await newsApi.fetchNewsByCategory(category, pageNumber, pageSize);
