@@ -6,6 +6,7 @@ export interface NewsDto {
   urlToImage: string;
   url: string;
   content: string;
+  publishedAt: string;
 }
 
 export class NewsApiController {

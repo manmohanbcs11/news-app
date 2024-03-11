@@ -17,6 +17,7 @@ interface NewsState {
   loading: boolean;
   pageNumber: number;
   totalArticles: number;
+  headlines: string;
 }
 
 export default class News extends Component<NewsProps, NewsState> {
@@ -27,6 +28,7 @@ export default class News extends Component<NewsProps, NewsState> {
       loading: false,
       pageNumber: 1,
       totalArticles: 0,
+      headlines: ''
     };
   }
 
@@ -50,16 +52,26 @@ export default class News extends Component<NewsProps, NewsState> {
     }
   }
 
+  capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   async fetchNews(pageSize: number, country: string, category: string, pageNumber: number, searchItem?: string) {
     this.setState({ loading: true });
     const newsApi = new NewsApiController();
     let response;
 
-    if (!Utils.isEmpty(searchItem)) {
+    if (searchItem && !Utils.isEmpty(searchItem)) {
+      document.title = `${this.capitalizeFirstLetter(searchItem)} - NewsBee`;
+      this.setState({ headlines: `NewsBee - Top ${this.capitalizeFirstLetter(searchItem)} Headlines` });
       response = await newsApi.fetchNewsByCategory(searchItem, pageNumber, pageSize);
     } else if (!Utils.isEmpty(country)) {
+      document.title = `${country.toUpperCase()} - NewsBee`;
+      this.setState({ headlines: `NewsBee - Top Headlines in ${country.toUpperCase()}` });
       response = await newsApi.fetchNewsByCountry(country, pageNumber, pageSize);
     } else {
+      document.title = `${this.capitalizeFirstLetter(category)} - NewsBee`;
+      this.setState({ headlines: `NewsBee - Top ${this.capitalizeFirstLetter(category)} Headlines` });
       response = await newsApi.fetchNewsByCategory(category, pageNumber, pageSize);
     }
 
@@ -83,11 +95,11 @@ export default class News extends Component<NewsProps, NewsState> {
   };
 
   render() {
-    const { articles, loading, pageNumber, totalArticles } = this.state;
+    const { articles, loading, pageNumber, totalArticles, headlines } = this.state;
 
     return (
       <div className='container my-3'>
-        <h2 className='text-center'>NewsBee - Top Headlines</h2>
+        <h2 className='text-center'>{headlines}</h2>
         {loading && <Spinner />}
         <div className='row'>
           {!loading && articles.map(article => (
@@ -97,6 +109,7 @@ export default class News extends Component<NewsProps, NewsState> {
                 description={article.description}
                 imageUrl={Utils.isEmpty(article.urlToImage) ? defaultIcon : article.urlToImage}
                 newsUrl={article.url}
+                publishedAt={article.publishedAt}
               />
             </div>
           ))}
