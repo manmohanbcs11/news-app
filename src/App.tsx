@@ -3,34 +3,32 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import NavBar from './components/NavBar';
 import News from './components/News';
-import { Utils } from './controller/utils';
 
-
+interface Props {}
 interface AppState {
-  pageSize: number,
-  country: string,
-  searchItem: string,
+  pageSize: number;
+  country: string;
+  searchItem: string;
 }
 
-export default class App extends Component<{}, AppState> {
-
-  constructor(props: AppState) {
+export default class App extends Component<Props, AppState> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       pageSize: 6,
       country: '',
-      searchItem: ''
+      searchItem: '',
     };
   }
 
-  updateCountry = (country: string) => {
-    this.setState({ country });
-  }
+  updateCountry = (countryValue: string) => {
+    this.setState({ country: countryValue });
+  };
 
   handleSearch = (searchItemValue: string) => {
     console.log('APP searchItemValue: ', searchItemValue);
     this.setState({ searchItem: searchItemValue });
-  }
+  };
 
   render() {
     const { pageSize, country, searchItem } = this.state;
@@ -38,19 +36,19 @@ export default class App extends Component<{}, AppState> {
     return (
       <Router>
         <div>
-          <NavBar updateCountry={this.updateCountry} handleSearch={this.handleSearch} history={undefined}></NavBar>
+          <NavBar updateCountry={this.updateCountry} handleSearch={this.handleSearch} history={undefined} />
           <Routes>
-            <Route path="/" element={<News pageSize={pageSize} country='' category='global'></News>} />
-            <Route path="/business" element={<News pageSize={pageSize} country='' category='business'></News>} />
-            <Route path="/entertainment" element={<News pageSize={pageSize} country='' category='entertainment'></News>} />
-            <Route path="/sports" element={<News pageSize={pageSize} country='' category='sports'></News>} />
-            <Route path="/technology" element={<News pageSize={pageSize} country='' category='technology'></News>} />
-            <Route path="/health" element={<News pageSize={pageSize} country='' category='health'></News>} />
-            <Route path="/country/:country" element={<News pageSize={pageSize} country={country} category=''></News>} />
-            <Route path="/search/:query" element={<News pageSize={pageSize} country='' category='' searchItem={searchItem}></News>} />
+            <Route path="/" element={<News pageSize={pageSize} country="" category="global" />} />
+            <Route path="/business" element={<News pageSize={pageSize} country="" category="business" />} />
+            <Route path="/entertainment" element={<News pageSize={pageSize} country="" category="entertainment" />} />
+            <Route path="/sports" element={<News pageSize={pageSize} country="" category="sports" />} />
+            <Route path="/technology" element={<News pageSize={pageSize} country="" category="technology" />} />
+            <Route path="/health" element={<News pageSize={pageSize} country="" category="health" />} />
+            <Route path="/country/:country" element={<News pageSize={pageSize} country={country} category="" />} />
+            <Route path="/search/:query" element={<News pageSize={pageSize} country="" category="" searchItem={searchItem} />} />
           </Routes>
         </div>
       </Router>
-    )
+    );
   }
 }
