@@ -10,9 +10,7 @@ export interface NewsDto {
 }
 
 export class NewsApiController {
-  // private readonly API_KEY: string = 'f00e1267d5c84b0aaede71a080e66960';
-  private readonly API_KEY: string = 'ead67462039d490a91838c297c9f0822';
-  // private readonly API_KEY: string = '46ac411b05264e71a0e2b557c33036da';
+  private readonly API_KEY = process.env.REACT_APP_API_KEY;
   private readonly BASE_URL: string = 'https://newsapi.org/v2';
 
   public async fetchNewsByCountry(country: string, pageNo: number, pageSize: number, category?: string, sortBy: string = 'popularity'): Promise<[NewsDto[], number]> {

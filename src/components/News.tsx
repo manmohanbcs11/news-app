@@ -11,6 +11,7 @@ interface NewsProps {
   country: string;
   category: string;
   searchItem?: string;
+  setProgress: (progress: number) => void;
 }
 
 interface NewsState {
@@ -34,8 +35,10 @@ export default class News extends Component<NewsProps, NewsState> {
   }
 
   async componentDidMount() {
-    if (!this.state.articles.length) {
+    if (!this.state.articles.length && this.state.pageNumber === 1) {
+      this.props.setProgress(0);
       await this.fetchNews();
+      this.props.setProgress(100);
     }
   }
 
@@ -47,6 +50,7 @@ export default class News extends Component<NewsProps, NewsState> {
       prevProps.country !== country ||
       prevProps.searchItem !== searchItem
     ) {
+      this.props.setProgress(0);
       this.setState(
         {
           articles: [],
@@ -59,6 +63,7 @@ export default class News extends Component<NewsProps, NewsState> {
           await this.fetchNews();
         }
       );
+      this.props.setProgress(100);
     }
   }
 
@@ -69,6 +74,7 @@ export default class News extends Component<NewsProps, NewsState> {
   fetchNews = async () => {
     const { pageSize, country, category, searchItem } = this.props;
     const { pageNumber, articles } = this.state;
+    this.props.setProgress(20);
     const newsApi = new NewsApiController();
 
     try {
@@ -80,6 +86,7 @@ export default class News extends Component<NewsProps, NewsState> {
             searchItem
           )} Headlines`
         });
+        this.props.setProgress(40);
         response = await newsApi.fetchNewsByCategory(
           searchItem,
           pageNumber,
@@ -90,6 +97,7 @@ export default class News extends Component<NewsProps, NewsState> {
         this.setState({
           headlines: `NewsBee - Top Headlines in ${country.toUpperCase()}`
         });
+        this.props.setProgress(40);
         response = await newsApi.fetchNewsByCountry(
           country,
           pageNumber,
@@ -102,6 +110,7 @@ export default class News extends Component<NewsProps, NewsState> {
             category
           )} Headlines`
         });
+        this.props.setProgress(40);
         response = await newsApi.fetchNewsByCategory(
           category,
           pageNumber,
@@ -109,12 +118,14 @@ export default class News extends Component<NewsProps, NewsState> {
         );
       }
 
+      this.props.setProgress(60);
       this.setState((prevState) => ({
-        articles: [...prevState.articles, ...response[0]],
+        articles: articles.concat(response[0]),
         loading: false,
         totalArticles: response[1],
         pageNumber: prevState.pageNumber + 1
       }));
+      this.props.setProgress(100);
     } catch (error: any) {
       this.setState({ loading: false });
       alert('Error fetching news. ' + error.message);
