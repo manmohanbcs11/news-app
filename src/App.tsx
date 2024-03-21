@@ -25,8 +25,7 @@ export default class App extends Component<Props, AppState> {
     this.setState({ country: countryValue });
   };
 
-  handleSearch = (searchItemValue: string) => {
-    console.log('APP searchItemValue: ', searchItemValue);
+  updateSearchItem = (searchItemValue: string) => {
     this.setState({ searchItem: searchItemValue });
   };
 
@@ -36,7 +35,7 @@ export default class App extends Component<Props, AppState> {
     return (
       <Router>
         <div>
-          <NavBar updateCountry={this.updateCountry} handleSearch={this.handleSearch} history={undefined} />
+          <NavBar updateCountry={this.updateCountry} updateSearchItem={this.updateSearchItem} />
           <Routes>
             <Route path="/" element={<News pageSize={pageSize} country="" category="global" />} />
             <Route path="/business" element={<News pageSize={pageSize} country="" category="business" />} />
@@ -45,7 +44,7 @@ export default class App extends Component<Props, AppState> {
             <Route path="/technology" element={<News pageSize={pageSize} country="" category="technology" />} />
             <Route path="/health" element={<News pageSize={pageSize} country="" category="health" />} />
             <Route path="/country/:country" element={<News pageSize={pageSize} country={country} category="" />} />
-            <Route path="/search/:query" element={<News pageSize={pageSize} country="" category="" searchItem={searchItem} />} />
+            <Route path="/search/:searchItem" element={<News pageSize={pageSize} country="" category="" searchItem={searchItem} />} />
           </Routes>
         </div>
       </Router>

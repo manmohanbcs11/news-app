@@ -57,7 +57,6 @@ export default class News extends Component<NewsProps, NewsState> {
         },
         async () => {
           await this.fetchNews();
-          console.log('componentDidUpdate: ', this.state);
         }
       );
     }
