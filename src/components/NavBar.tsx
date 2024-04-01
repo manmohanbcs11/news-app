@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 interface NavProps {
   updateCountry(country: string): void;
   updateSearchItem(searchItem: string): void;
 }
 
-const NavBar: React.FC<NavProps> = ({ updateCountry }) => {
+const NavBar: React.FC<NavProps> = ({ updateCountry, updateSearchItem }) => {
   const navigate = useNavigate();
   const [searchItem, setSearchItem] = React.useState('');
 
@@ -22,11 +22,13 @@ const NavBar: React.FC<NavProps> = ({ updateCountry }) => {
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    updateSearchItem(searchItem);
     navigate(`/search/${searchItem}`);
+    setSearchItem('');
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
         <NavLink className="navbar-brand" style={{ color: '#3366dd' }} aria-current="page" to="/">
           <FontAwesomeIcon className='mx-1' icon={faHome} />
@@ -68,7 +70,7 @@ const NavBar: React.FC<NavProps> = ({ updateCountry }) => {
               </li>
           </ul>
           <form className="d-flex" role="search" onSubmit={handleSearch}>
-            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={handleInputChange} />
+            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={handleInputChange} value={searchItem} />
             <button className="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>

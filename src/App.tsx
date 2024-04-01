@@ -4,6 +4,7 @@ import LoadingBar from 'react-top-loading-bar'
 import './App.css';
 import NavBar from './components/NavBar';
 import News from './components/News';
+import React from 'react';
 
 interface Props {}
 interface AppState {

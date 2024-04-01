@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { NewsApiController, NewsDto } from '../controller/newsApiController';
 import { Utils } from '../controller/utils';
